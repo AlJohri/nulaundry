@@ -75,6 +75,7 @@ if __name__ == '__main__':
                 current[item_id]['timestamp'] = int(time.time() * 1000)
                 key = "%s-%s" % (item_id, current[item_id]['timestamp'])
                 result = firebase.put(url='/status', name=key, data=current[item_id], headers={'print': 'pretty'})
+                result = firebase.put(url='/items', name=item_id, data=current[item_id], headers={'print': 'pretty'})
 
                 if previous == {}:
                     print item_id, t.red("NA"), "=>", t.green(current[item_id]['status'])

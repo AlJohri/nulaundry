@@ -12,13 +12,13 @@ angular.module('webApp')
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
+        templateUrl: 'views/items.html',
+        controller: 'ItemsCtrl'
       })
 
-      .when('/chat', {
-        templateUrl: 'views/chat.html',
-        controller: 'ChatCtrl'
+      .when('/status', {
+        templateUrl: 'views/status.html',
+        controller: 'StatusCtrl'
       })
       .otherwise({redirectTo: '/'});
   }]);

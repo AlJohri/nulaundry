@@ -1,4 +1,3 @@
 <ul ng-repeat="s in status | orderBy:'timestamp':'reverse'">
-  <!-- <li><pre>{{s | json}}</pre></li> -->
   <li>{{s.id}} | {{s.timestamp | date:'h:m:s a'}} - {{s.location_name}} - {{s.index}} - {{s.status}}</li>
 </ul>

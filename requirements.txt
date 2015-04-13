@@ -1,3 +1,4 @@
+blessings==1.6
 cssselect==0.9.1
 futures==2.2.0
 lxml==3.4.2

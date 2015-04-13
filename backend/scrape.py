@@ -72,7 +72,7 @@ if __name__ == '__main__':
         for item_id, item in current.iteritems():
 
             if previous == {} or previous[item_id]['status'] != current[item_id]['status']:
-                current[item_id]['timestamp'] = int(time.time())
+                current[item_id]['timestamp'] = int(time.time()) * 1000
                 key = "%s-%s" % (item_id, current[item_id]['timestamp'])
                 result = firebase.put(url='/status', name=key, data=current[item_id], headers={'print': 'pretty'})
 

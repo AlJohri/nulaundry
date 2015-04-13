@@ -1,0 +1,4 @@
+<ul ng-repeat="s in status">
+  <!-- <li><pre>{{s | json}}</pre></li> -->
+  <li>{{s.id}} | {{s.timestamp | date:'yyyy-MM-dd HH:mm:ss Z'}} - {{s.location_name}} - {{s.index}} - {{s.status}}</li>
+</ul>

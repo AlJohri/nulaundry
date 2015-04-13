@@ -1,5 +1,5 @@
 <ol>
   <li ng-repeat="item in items | orderBy:'timestamp':'reverse'">
-  	{{item.id}} | {{item.timestamp | date:'h:m:s a'}} - {{item.location_name}} - {{item.index}} - {{item.status}}
+  	{{item.id}} | {{item.timestamp | date:'h:mm:s a'}} - {{item.location_name}} - {{item.index}} - {{item.status}}
   </li>
 </ol>

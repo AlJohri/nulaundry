@@ -1,8 +1,6 @@
 import time, requests, lxml.html
 from pprint import pprint as pp
 
-from deepdiff import DeepDiff
-
 from blessings import Terminal
 t = Terminal()
 

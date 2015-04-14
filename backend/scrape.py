@@ -79,7 +79,8 @@ def save_statuses():
         for machine_id, machine in scrape_machines().iteritems():
 
             last = firebase.get(url="/machines/%s/statuses" % machine_id, name=None) # params={"limitToLast": 1}
-            last_timestamp, last_status = sorted(last.values(), key=lambda x: x[0])[-1] if last else ("", "")
+            last_array = sorted(last.values(), key=lambda x: x[0]) if last else []
+            last_timestamp, last_status = last_array[-1] if last else ("", "")
 
             status = machine.pop('status')
 
@@ -90,11 +91,16 @@ def save_statuses():
                 print machine_id, t.red(last_status), "=>", t.green(status)
 
                 if status == "Avail":
-                    all_avails = [tm for tm,st in sorted(last.values(), key=lambda x: x[0])[:-1] if st == "Avail"] if last else None
+
+                    all_avails = [tm for tm,st in last_array[:-1] if st == "Avail"] if last else None
+
                     last_avail_timestamp = all_avails[-1] if all_avails else None
+                    last_avail_timestamp_index = last_array.index([last_avail_timestamp, "Avail"]) if last_avail_timestamp else None
+                    timestamp_after_last_avail = last_array[last_avail_timestamp_index + 1][0] if last_avail_timestamp_index else None
+
                     if last_avail_timestamp:
                         prev_num_runs = firebase.get(url='/machines/%s' % machine_id, name='num_runs', headers={'print': 'pretty'}) or 0
-                        firebase.post(url='/machines/%s/runs' % machine_id, data=(last_avail_timestamp, timestamp), headers={'print': 'pretty'})
+                        firebase.post(url='/machines/%s/runs' % machine_id, data=(timestamp_after_last_avail, timestamp), headers={'print': 'pretty'})
                         firebase.put(url='/machines/%s' % machine_id, name='num_runs', data=prev_num_runs+1, headers={'print': 'pretty'})
                         print machine_id, "Run Complete:", last_avail_timestamp, timestamp
 

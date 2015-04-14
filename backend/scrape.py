@@ -79,7 +79,7 @@ def save_statuses():
         for machine_id, machine in scrape_machines().iteritems():
 
             last = firebase.get(url="/machines/%s/statuses" % machine_id, name=None) # params={"limitToLast": 1}
-            last_timestamp, last_status = last.values()[-1] if last else ("", "")
+            last_timestamp, last_status = sorted(last.values(), key=lambda x: x[0])[-1] if last else ("", "")
 
             status = machine.pop('status')
 
@@ -90,7 +90,7 @@ def save_statuses():
                 print machine_id, t.red(last_status), "=>", t.green(status)
 
                 if status == "Avail":
-                    all_avails = [tm for tm,st in last.values()[:-1] if st == "Avail"] if last else None
+                    all_avails = [tm for tm,st in sorted(last.values(), key=lambda x: x[0])[:-1] if st == "Avail"] if last else None
                     last_avail_timestamp = all_avails[-1] if all_avails else None
                     if last_avail_timestamp:
                         prev_num_runs = firebase.get(url='/machines/%s' % machine_id, name='num_runs', headers={'print': 'pretty'}) or 0

@@ -7,9 +7,9 @@ Show Statuses?: <input type="checkbox" ng-model="showStatuses"> <br/>
 </p>
 <!-- <pre>{{_.omit(last_change, 'statuses') | json}}</pre> -->
 
-<h4>Machines</h4>
+<h4>Active Machines</h4>
 <ol>
-  <li ng-repeat="machine in machines | filter:{'status':'!Out of service'} | orderBy:'id'">
+  <li ng-repeat="machine in machines | filter:{'status':'!Out of service'} | filter:{'status':'!Avail'} | orderBy:'id'">
   	{{machine.id}} - {{machine.type}} - {{machine.location_name}} - {{machine.index}} - {{machine.timestamp | date:'h:mm:ss a'}} - {{machine.status}} - {{machine.num_runs}} runs
 
     <div ng-if="showRuns">
@@ -17,6 +17,30 @@ Show Statuses?: <input type="checkbox" ng-model="showStatuses"> <br/>
     	  <li ng-repeat="item in machine.runs | toArray track by $index">
     	    Run {{$index+1}} - {{item[0] | date:'h:mm:ss a'}} - {{item[1] | date:'h:mm:ss a'}} - {{ (item[1] - item[0])/1000/60 | number:2 }} minutes
     	  </li>
+      </ul>
+    </div>
+
+    <div ng-if="showStatuses">
+      <ul ng-if="machine.statuses">
+        <li ng-repeat="s in machine.statuses | orderBy:'timestamp':'reverse'">
+          {{ s[0] | date:'h:mm:ss a'}} {{ s[1] }}
+        </li>
+      </ul>
+    </div>
+
+  </li>
+</ol>
+
+<h4>Available Machines</h4>
+<ol>
+  <li ng-repeat="machine in machines | filter:{'status':'Avail'} | orderBy:'id'">
+    {{machine.id}} - {{machine.type}} - {{machine.location_name}} - {{machine.index}} - {{machine.timestamp | date:'h:mm:ss a'}} - {{machine.status}} - {{machine.num_runs}} runs
+
+    <div ng-if="showRuns">
+      <ul ng-if="machine.runs">
+        <li ng-repeat="item in machine.runs | toArray track by $index">
+          Run {{$index+1}} - {{item[0] | date:'h:mm:ss a'}} - {{item[1] | date:'h:mm:ss a'}} - {{ (item[1] - item[0])/1000/60 | number:2 }} minutes
+        </li>
       </ul>
     </div>
 

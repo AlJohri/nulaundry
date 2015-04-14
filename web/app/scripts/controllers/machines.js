@@ -13,7 +13,7 @@ angular.module('webApp')
 	$scope.machines = $firebaseArray(Ref.child('machines'));
 	$scope.machines.$loaded().catch(alert);
 
-  $scope.Date = Date;
+  $scope.showRuns = true;
 
   function alert(msg) {
     $scope.err = msg;

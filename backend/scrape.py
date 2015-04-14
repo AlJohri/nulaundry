@@ -83,6 +83,7 @@ def save_statuses():
             last_timestamp, last_status = last_array[-1] if last else ("", "")
 
             status = machine.pop('status')
+            if status == "Out of service": continue
 
             if last_status != status:
                 firebase.put(url='/machines/%s/statuses' % machine_id, name=timestamp, data=(timestamp, status), headers={'print': 'pretty'})

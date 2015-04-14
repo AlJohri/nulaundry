@@ -1,1 +1,1 @@
-clock: python backend/scrape.py
+clock: python backend/scrape.py statuses

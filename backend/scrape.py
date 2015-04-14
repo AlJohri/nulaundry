@@ -1,24 +1,25 @@
-import time, requests, lxml.html
+import sys, time, requests, lxml.html
 from pprint import pprint as pp
 
 from blessings import Terminal
 t = Terminal()
 
-def scrape_laundryview():
+from firebase import firebase
+firebase = firebase.FirebaseApplication('https://aljohri-nulaundry.firebaseio.com', None)
 
-    items = {}
+# http://m.laundryview.com/usage.php?lr=2025710
 
+def scrape_locations():
     locations_url = "http://m.laundryview.com/lvs.php?s=328"
     locations_response = requests.get(locations_url)
     locations_doc = lxml.html.fromstring(locations_response.content)
+    return [(location.get('id'), location.text) for location in locations_doc.cssselect("ul[data-role=listview] li:not([data-role=list-divider]) a")]
 
-    for location in locations_doc.cssselect("ul[data-role=listview] li:not([data-role=list-divider]) a"):
-        location_name = location.text
-        location_id = location.get('id')
-
+def scrape_machines():
+    machines = {}
+    for location_id, location_name in scrape_locations():
         # print location_name, location_id
-
-        washers_dryers_url = "http://m.laundryview.com/submitFunctions.php?monitor=true&lr=%s&cell=null" % location.get('id')
+        washers_dryers_url = "http://m.laundryview.com/submitFunctions.php?monitor=true&lr=%s&cell=null" % location_id
         washers_dryers_response = requests.get(washers_dryers_url)
         washers_dryers_doc = lxml.html.fromstring(washers_dryers_response.content)
 
@@ -30,7 +31,7 @@ def scrape_laundryview():
             washer_status = washer.cssselect('a:nth-child(1) p')[0].text
             washer_id = washer.cssselect('a')[0].get('id')
             # print "\t", "washer", washer_id, washer_index, washer_status
-            items[washer_id] = {
+            machines[washer_id] = {
                 "location_id": location_id,
                 "location_name": location_name,
                 "id": washer_id,
@@ -47,7 +48,7 @@ def scrape_laundryview():
             dryer_status = dryer.cssselect('a:nth-child(1) p')[0].text
             dryer_id = dryer.cssselect('a')[0].get('id')
             # print "\t", "dryer", dryer_id, dryer_index, dryer_status
-            items[dryer_id] = {
+            machines[dryer_id] = {
                 "location_id": location_id,
                 "location_name": location_name,
                 "id": dryer_id,
@@ -56,31 +57,45 @@ def scrape_laundryview():
                 "type": "dryer"
             }
 
-    return items
+    return machines
+
+def save_locations():
+    for location_id, location_name in scrape_locations():
+        location = {"id": location_id, "name": location_name}
+        print location
+        firebase.put(url='/locations', name=location_id, data=location, headers={'print': 'pretty'})
+
+def save_machines():
+    for machine_id, machine in scrape_machines().iteritems():
+        del machine['status']
+        result = firebase.put(url='/machines', name=machine_id, data=machine, headers={'print': 'pretty'})
+
+def save_statuses():
+    while True:
+
+        timestamp = int(time.time() * 1000)
+
+        for machine_id, machine in scrape_machines().iteritems():
+
+            last = firebase.get("/machines/%s/statuses" % machine_id, params={"limitToLast": 1})
+            last_timestamp, last_status = last if last else (None, None)
+
+            status = machine.pop('status')
+
+            if last_status != current_status:
+                result = firebase.post(url='/machines/%s/statuses' % machine_id, data=(timestamp, status), headers={'print': 'pretty'})
+                print machine_id, t.red(last_status), "=>", t.green(status)
+
+        print "\nSleeping 10 seconds ...\n"
 
 if __name__ == '__main__':
 
-    from firebase import firebase
-    firebase = firebase.FirebaseApplication('https://aljohri-nulaundry.firebaseio.com', None)
+    if len(sys.argv) != 2:
+        raise Exception("Usage: python scrape.py <resource>")
 
-    previous = {}
-    current = {}
-    while True:
-        previous = current
-        current = scrape_laundryview()
-
-        for machine_id, item in current.iteritems():
-
-            if previous == {} or previous[machine_id]['status'] != current[machine_id]['status']:
-                current[machine_id]['timestamp'] = int(time.time() * 1000)
-                current[machine_id]['previous'] = previous[machine_id]['status'] if previous != {} else ""
-                key = "%s-%s" % (machine_id, current[machine_id]['timestamp'])
-                result = firebase.put(url='/status', name=key, data=current[machine_id], headers={'print': 'pretty'})
-                result = firebase.put(url='/items', name=machine_id, data=current[machine_id], headers={'print': 'pretty'})
-
-                if previous == {}:
-                    print machine_id, t.red("NA"), "=>", t.green(current[machine_id]['status'])
-                else:
-                    print machine_id, t.red(previous[machine_id]['status']), "=>", t.green(current[machine_id]['status'])
-
-        print "\nSleeping 10 seconds ...\n"
+    if sys.argv[1] == "statuses":
+        save_statuses()
+    elif sys.argv[1] == "machines":
+        save_machines()
+    elif sys.argv[1] == "locations":
+        scrape_locations()

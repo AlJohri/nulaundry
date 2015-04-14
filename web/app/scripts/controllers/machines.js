@@ -13,6 +13,8 @@ angular.module('webApp')
 	$scope.machines = $firebaseArray(Ref.child('machines'));
 	$scope.machines.$loaded().catch(alert);
 
+  $scope.Date = Date;
+
   function alert(msg) {
     $scope.err = msg;
     $timeout(function() {

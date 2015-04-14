@@ -1,9 +1,10 @@
 <ol>
-  <li ng-repeat="machine in machines | filter:{'status':'!Out of service'} | orderBy:'id'">
-  	{{machine.id}} - {{machine.location_name}} - {{machine.index}} - {{machine.timestamp | date:'h:mm:ss a'}} - {{machine.status}} - {{ machine.runs ? (machine.runs | toArray).length : 0 }} runs
+  <li ng-repeat="machine in machines | filter:{'status':'!Out of service'} | orderBy:'num_runs':'reverse'">
+  	{{machine.id}} - {{machine.type}} - {{machine.location_name}} - {{machine.index}} - {{machine.timestamp | date:'h:mm:ss a'}} - {{machine.status}} - {{machine.num_runs}} runs
     <ul ng-if="machine.runs">
   	  <li ng-repeat="item in machine.runs | toArray track by $index">
-  	    Run {{$index+1}} - {{item[0] | date:'h:mm:ss a'}} - {{item[1] | date:'h:mm:ss a'}}
+  	    Run {{$index+1}} - {{item[0] | date:'h:mm:ss a'}} - {{item[1] | date:'h:mm:ss a'}} - 
+        {{ (item[1] - item[0])/1000/60 | number:2 }} minutes
   	  </li>
     </ul>
   </li>

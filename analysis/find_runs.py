@@ -10,8 +10,6 @@ def normal_date(timestamp):
 
 for machine_id, machine in machines.iteritems():
 
-	# if machine_id != '33057': continue
-
 	statuses = sorted(machine['statuses'].values(), key=lambda x: x[0])
 
 	for timestamp, status in reversed(statuses):

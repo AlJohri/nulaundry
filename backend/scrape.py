@@ -87,6 +87,12 @@ def save_statuses():
                 result = firebase.post(url='/machines/%s/statuses' % machine_id, data=(timestamp, status), headers={'print': 'pretty'})
                 print machine_id, t.red(last_status), "=>", t.green(status)
 
+            if status == "Avail":
+                all_avails = [t for t,s in last.values()[:-1] if s == "Avail"]
+                last_avail_timestamp = all_avails[-1] if all_avails else None
+                if last_avail_timestamp:
+                    result = firebase.post(url='/machines/%s/runs' % machine_id, data=(last_avail_timestamp, timestamp), headers={'print': 'pretty'})
+
         print "\nSleeping 10 seconds ...\n"
 
 if __name__ == '__main__':

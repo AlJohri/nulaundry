@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
             if previous == {} or previous[machine_id]['status'] != current[machine_id]['status']:
                 current[machine_id]['timestamp'] = int(time.time() * 1000)
-                current[machine_id]['previous'] = previous[machine_id]['status']
+                current[machine_id]['previous'] = previous[machine_id]['status'] if previous != {} else ""
                 key = "%s-%s" % (machine_id, current[machine_id]['timestamp'])
                 result = firebase.put(url='/status', name=key, data=current[machine_id], headers={'print': 'pretty'})
                 result = firebase.put(url='/items', name=machine_id, data=current[machine_id], headers={'print': 'pretty'})

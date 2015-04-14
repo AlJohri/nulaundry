@@ -10,7 +10,7 @@
 angular.module('webApp')
   .controller('StatusCtrl', function ($scope, Ref, $firebaseArray) {
 
-	$scope.status = $firebaseArray(Ref.child('status').limitToLast(200));
+	$scope.status = $firebaseArray(Ref.child('status').orderByChild("timestamp").limitToLast(200));
 	$scope.status.$loaded().catch(alert);
 
   function alert(msg) {

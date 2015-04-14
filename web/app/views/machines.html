@@ -1,5 +1,5 @@
 <ol>
-  <li ng-repeat="machine in machines | filter:{'status':'!Out of service'} | orderBy:'timestamp':'reverse'">
+  <li ng-repeat="machine in machines | filter:{'status':'!Out of service'} | orderBy:'id'">
   	{{machine.id}} - {{machine.location_name}} - {{machine.index}} - {{machine.timestamp | date:'h:mm:ss a'}} - {{machine.status}} - {{ machine.runs ? (machine.runs | toArray).length : 0 }} runs
     <ul ng-if="machine.runs">
   	  <li ng-repeat="item in machine.runs | toArray track by $index">

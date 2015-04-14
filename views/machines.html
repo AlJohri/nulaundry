@@ -1,0 +1,5 @@
+<ol> <li ng-repeat="machine in machines | orderBy:'id'"> {{machine.id}} - {{machine.location_name}} - {{machine.index}} <ul> <li ng-repeat="item in machine.statuses | toArray"> {{item[0] | date:'h:mm:ss a'}} - {{item[1]}} </li> </ul> </li> </ol> <!-- <ul>
+  <li ng-repeat="s in status | orderBy:'timestamp':'reverse'">
+  	{{s.id}} | {{s.timestamp | date:'h:mm:s a'}} - {{s.location_name}} - {{s.index}} - {{s.previous}} => {{s.status}}
+  </li>
+</ul> -->

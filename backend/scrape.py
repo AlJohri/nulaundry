@@ -67,9 +67,9 @@ def save_locations():
 
 def save_machines():
     for machine_id, machine in scrape_machines().iteritems():
-        del machine['status']
+        if machine['status'] != "Out of service": del machine['status']
         print machine
-        result = firebase.put(url='/machines', name=machine_id, data=machine, headers={'print': 'pretty'})
+        firebase.put(url='/machines', name=machine_id, data=machine, headers={'print': 'pretty'})
 
 def save_statuses():
     while True:
@@ -84,16 +84,18 @@ def save_statuses():
             status = machine.pop('status')
 
             if last_status != status:
-                result = firebase.put(url='/machines/%s/statuses' % machine_id, name=timestamp, data=(timestamp, status), headers={'print': 'pretty'})
-                result = firebase.put(url='/machines/%s' % machine_id, name='timestamp', data=timestamp, headers={'print': 'pretty'})
-                result = firebase.put(url='/machines/%s' % machine_id, name='status', data=status, headers={'print': 'pretty'})
+                firebase.put(url='/machines/%s/statuses' % machine_id, name=timestamp, data=(timestamp, status), headers={'print': 'pretty'})
+                firebase.put(url='/machines/%s' % machine_id, name='timestamp', data=timestamp, headers={'print': 'pretty'})
+                firebase.put(url='/machines/%s' % machine_id, name='status', data=status, headers={'print': 'pretty'})
                 print machine_id, t.red(last_status), "=>", t.green(status)
 
                 if status == "Avail":
                     all_avails = [tm for tm,st in last.values()[:-1] if st == "Avail"] if last else None
                     last_avail_timestamp = all_avails[-1] if all_avails else None
                     if last_avail_timestamp:
-                        result = firebase.post(url='/machines/%s/runs' % machine_id, data=(last_avail_timestamp, timestamp), headers={'print': 'pretty'})
+                        prev_num_runs = firebase.get(url='/machines/%s' % machine_id, name='num_runs', data=, headers={'print': 'pretty'})
+                        firebase.post(url='/machines/%s/runs' % machine_id, data=(last_avail_timestamp, timestamp), headers={'print': 'pretty'})
+                        firebase.put(url='/machines/%s' % machine_id, name='num_runs', data=prev_num_runs+1, headers={'print': 'pretty'})
                         print machine_id, "Run Complete:", last_avail_timestamp, timestamp
 
         print "\nSleeping 10 seconds ...\n"

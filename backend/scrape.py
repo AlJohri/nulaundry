@@ -92,17 +92,17 @@ def save_statuses():
 
                 if status == "Avail":
 
-                    all_avails = [tm for tm,st in last_array[:-1] if st == "Avail"] if last else None
+                    all_avails = [tm for tm,st in last_array[:-1] if st == "Avail" and tm < timestamp] if last else None
 
                     last_avail_timestamp = all_avails[-1] if all_avails else None
                     last_avail_timestamp_index = last_array.index([last_avail_timestamp, "Avail"]) if last_avail_timestamp else None
                     timestamp_after_last_avail = last_array[last_avail_timestamp_index + 1][0] if last_avail_timestamp_index else None
 
-                    if last_avail_timestamp:
+                    if timestamp_after_last_avail:
                         prev_num_runs = firebase.get(url='/machines/%s' % machine_id, name='num_runs', headers={'print': 'pretty'}) or 0
-                        firebase.post(url='/machines/%s/runs' % machine_id, data=(timestamp_after_last_avail, timestamp), headers={'print': 'pretty'})
                         firebase.put(url='/machines/%s' % machine_id, name='num_runs', data=prev_num_runs+1, headers={'print': 'pretty'})
-                        print machine_id, "Run Complete:", last_avail_timestamp, timestamp
+                        firebase.post(url='/machines/%s/runs' % machine_id, data=(timestamp_after_last_avail, timestamp), headers={'print': 'pretty'})
+                        print machine_id, "Run Complete:", timestamp_after_last_avail, timestamp
 
         print "\nSleeping 10 seconds ...\n"
 

@@ -22,4 +22,11 @@ angular.module('webApp')
     }, 5000);
   }
 
+  Ref.child('machines').on('child_changed', function(snapshot) {
+    var changed_machine = snapshot.val();
+    $scope.last_change = changed_machine;
   });
+
+  $scope._ = _;
+
+});

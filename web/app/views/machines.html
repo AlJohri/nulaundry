@@ -1,10 +1,16 @@
+<h4>Last Updated Machine</h4>
+<p>
+  {{last_change.id}} - {{last_change.type}} - {{last_change.location_name}} - {{last_change.index}} - {{last_change.timestamp | date:'h:mm:ss a'}} - {{last_change.status}}
+</p>
+<!-- <pre>{{_.omit(last_change, 'statuses') | json}}</pre> -->
+
+<h4>Machines</h4>
 <ol>
-  <li ng-repeat="machine in machines | filter:{'status':'!Out of service'} | orderBy:'num_runs':'reverse'">
+  <li ng-repeat="machine in machines | filter:{'status':'!Out of service'} | orderBy:'id'">
   	{{machine.id}} - {{machine.type}} - {{machine.location_name}} - {{machine.index}} - {{machine.timestamp | date:'h:mm:ss a'}} - {{machine.status}} - {{machine.num_runs}} runs
     <ul ng-if="machine.runs">
   	  <li ng-repeat="item in machine.runs | toArray track by $index">
-  	    Run {{$index+1}} - {{item[0] | date:'h:mm:ss a'}} - {{item[1] | date:'h:mm:ss a'}} - 
-        {{ (item[1] - item[0])/1000/60 | number:2 }} minutes
+  	    Run {{$index+1}} - {{item[0] | date:'h:mm:ss a'}} - {{item[1] | date:'h:mm:ss a'}} - {{ (item[1] - item[0])/1000/60 | number:2 }} minutes
   	  </li>
     </ul>
   </li>

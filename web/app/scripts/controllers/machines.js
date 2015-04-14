@@ -2,16 +2,16 @@
 
 /**
  * @ngdoc function
- * @name webApp.controller:StatusCtrl
+ * @name webApp.controller:MachinesCtrl
  * @description
  * # MainCtrl
  * Controller of the webApp
  */
 angular.module('webApp')
-  .controller('StatusCtrl', function ($scope, Ref, $firebaseArray) {
+  .controller('MachinesCtrl', function ($scope, Ref, $firebaseArray) {
 
-	$scope.status = $firebaseArray(Ref.child('status').orderByChild("timestamp").limitToLast(200));
-	$scope.status.$loaded().catch(alert);
+	$scope.machines = $firebaseArray(Ref.child('machines'));
+	$scope.machines.$loaded().catch(alert);
 
   function alert(msg) {
     $scope.err = msg;

@@ -78,12 +78,12 @@ def save_statuses():
 
         for machine_id, machine in scrape_machines().iteritems():
 
-            last = firebase.get("/machines/%s/statuses" % machine_id, params={"limitToLast": 1})
-            last_timestamp, last_status = last if last else (None, None)
+            last = firebase.get(url="/machines/%s/statuses" % machine_id, name=None) # params={"limitToLast": 1}
+            last_timestamp, last_status = last.values()[-1] if last else ("", "")
 
             status = machine.pop('status')
 
-            if last_status != current_status:
+            if last_status != status:
                 result = firebase.post(url='/machines/%s/statuses' % machine_id, data=(timestamp, status), headers={'print': 'pretty'})
                 print machine_id, t.red(last_status), "=>", t.green(status)
 

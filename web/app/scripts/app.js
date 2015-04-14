@@ -16,5 +16,6 @@ angular.module('webApp', [
     'ngSanitize',
     'ngTouch',
     'firebase',
-    'firebase.ref'
+    'firebase.ref',
+    'angular-toArrayFilter'
   ]);

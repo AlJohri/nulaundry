@@ -93,7 +93,7 @@ def save_statuses():
                     all_avails = [tm for tm,st in last.values()[:-1] if st == "Avail"] if last else None
                     last_avail_timestamp = all_avails[-1] if all_avails else None
                     if last_avail_timestamp:
-                        prev_num_runs = firebase.get(url='/machines/%s' % machine_id, name='num_runs', data=, headers={'print': 'pretty'}) or 0
+                        prev_num_runs = firebase.get(url='/machines/%s' % machine_id, name='num_runs', headers={'print': 'pretty'}) or 0
                         firebase.post(url='/machines/%s/runs' % machine_id, data=(last_avail_timestamp, timestamp), headers={'print': 'pretty'})
                         firebase.put(url='/machines/%s' % machine_id, name='num_runs', data=prev_num_runs+1, headers={'print': 'pretty'})
                         print machine_id, "Run Complete:", last_avail_timestamp, timestamp

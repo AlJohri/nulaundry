@@ -69,17 +69,18 @@ if __name__ == '__main__':
         previous = current
         current = scrape_laundryview()
 
-        for item_id, item in current.iteritems():
+        for machine_id, item in current.iteritems():
 
-            if previous == {} or previous[item_id]['status'] != current[item_id]['status']:
-                current[item_id]['timestamp'] = int(time.time() * 1000)
-                key = "%s-%s" % (item_id, current[item_id]['timestamp'])
-                result = firebase.put(url='/status', name=key, data=current[item_id], headers={'print': 'pretty'})
-                result = firebase.put(url='/items', name=item_id, data=current[item_id], headers={'print': 'pretty'})
+            if previous == {} or previous[machine_id]['status'] != current[machine_id]['status']:
+                current[machine_id]['timestamp'] = int(time.time() * 1000)
+                current[machine_id]['previous'] = previous[machine_id]['status']
+                key = "%s-%s" % (machine_id, current[machine_id]['timestamp'])
+                result = firebase.put(url='/status', name=key, data=current[machine_id], headers={'print': 'pretty'})
+                result = firebase.put(url='/items', name=machine_id, data=current[machine_id], headers={'print': 'pretty'})
 
                 if previous == {}:
-                    print item_id, t.red("NA"), "=>", t.green(current[item_id]['status'])
+                    print machine_id, t.red("NA"), "=>", t.green(current[machine_id]['status'])
                 else:
-                    print item_id, t.red(previous[item_id]['status']), "=>", t.green(current[item_id]['status'])
+                    print machine_id, t.red(previous[machine_id]['status']), "=>", t.green(current[machine_id]['status'])
 
         print "\nSleeping 10 seconds ...\n"

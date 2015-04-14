@@ -68,6 +68,7 @@ def save_locations():
 def save_machines():
     for machine_id, machine in scrape_machines().iteritems():
         del machine['status']
+        print machine
         result = firebase.put(url='/machines', name=machine_id, data=machine, headers={'print': 'pretty'})
 
 def save_statuses():

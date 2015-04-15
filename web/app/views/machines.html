@@ -21,8 +21,8 @@ Average Dryer Time: {{ averageMachineTime('dryer') | number:2 }} <br/>
 <h4>Locations</h4>
 <!-- <pre>{{locations | json}}</pre> -->
 <ul>
-  <li ng-repeat="location in locations">
-    {{ location.name }} - {{ averageLocationTime(location.name, 'washer') }} - {{ averageLocationTime(location.name, 'dryer') }}
+  <li ng-repeat="location in locations | orderBy:locationNumRuns:'reverse'">
+    {{ location.name }} - {{locationNumRuns(location)}} - {{ averageLocationTime(location.name, 'washer') }} - {{ averageLocationTime(location.name, 'dryer') }}
   </li>
 </ul>
 

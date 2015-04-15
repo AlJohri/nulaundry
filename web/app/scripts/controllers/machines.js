@@ -19,7 +19,7 @@ angular.module('webApp')
   $scope.locations = $firebaseArray(Ref.child('locations'));
   $scope.locations.$loaded().catch(alert);
 
-  $scope.showRuns = true;
+  // $scope.showRuns = true;
 
   function alert(msg) {
     $scope.err = msg;
@@ -32,6 +32,13 @@ angular.module('webApp')
     var changed_machine = snapshot.val();
     $scope.last_change = changed_machine;
   });
+
+  $scope.locationNumRuns = function(location) {
+    return _.chain($scope.machines)
+      .filter(function(machine) {return machine['location_name'] == location.name; })
+      .map(function(machine) {return machine.num_runs; })
+      .reduce(function(x,y) {return x+y;}, 0);
+  }
 
   $scope.averageMachineTime = function(type) {
 

@@ -7,6 +7,25 @@ Show Statuses?: <input type="checkbox" ng-model="showStatuses"> <br/>
 </p>
 <!-- <pre>{{_.omit(last_change, 'statuses') | json}}</pre> -->
 
+<hr/>
+
+Since April 13th. <br/>
+<br/>
+Total Runs: {{machines | total:'num_runs'}} <br/>
+Washer Runs: {{machines | filter:{'type':'washer'} | total:'num_runs'}} <br/>
+Dryer Runs: {{machines | filter:{'type':'dryer'} | total:'num_runs'}} <br/>
+<br/>
+Average Washer Time: {{ averageMachineTime('washer') | number:2  }} <br/>
+Average Dryer Time: {{ averageMachineTime('dryer') | number:2 }} <br/>
+
+<h4>Locations</h4>
+<!-- <pre>{{locations | json}}</pre> -->
+<ul>
+  <li ng-repeat="location in locations">
+    {{ location.name }} - {{ averageLocationTime(location.name, 'washer') }} - {{ averageLocationTime(location.name, 'dryer') }}
+  </li>
+</ul>
+
 <h4>Active Machines</h4>
 <ol>
   <li ng-repeat="machine in machines | filter:{'status':'!Out of service'} | filter:{'status':'!Avail'} | orderBy:'id'">
